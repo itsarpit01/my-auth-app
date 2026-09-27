@@ -170,3 +170,12 @@
   color: #064e3b;
   font-weight: 600;
 }
+.switch-text a {
+  color: #064e3b;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.switch-text a:hover {
+  color: #0a6b52;
+}

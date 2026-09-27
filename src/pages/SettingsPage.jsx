@@ -1,25 +1,39 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, logoutUser, updateUser } from "../utils/auth";
-import { updateProfileSchema } from "../utils/validationSchemas";
+import { getCurrentUser, logoutUser, updateUser, changePassword } from "../utils/auth";
+import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
 import "../styles/AuthStyles.css";
+
+function getPasswordChecks(pwd) {
+  return {
+    length: pwd.length >= 8,
+    uppercase: /[A-Z]/.test(pwd),
+    lowercase: /[a-z]/.test(pwd),
+    number: /[0-9]/.test(pwd),
+    special: /[^A-Za-z0-9]/.test(pwd),
+  };
+}
 
 function SettingsPage() {
   const [user, setUser] = useState(null);
 
-  // Edit mode on/off karne ke liye
-  const [isEditing, setIsEditing] = useState(false);
+  // View / Edit Profile / Change Password - teen modes
+  const [mode, setMode] = useState("view"); // "view" | "editProfile" | "changePassword"
 
-  // Form fields ke liye alag state (edit karte waqt)
+  // Profile edit ke liye states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  // Password change ke liye states
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+  const passwordChecks = getPasswordChecks(newPassword);
 
-  // Page load hote hi localStorage se user data nikaal lo
   useEffect(() => {
     const currentUser = getCurrentUser();
     setUser(currentUser);
@@ -31,26 +45,19 @@ function SettingsPage() {
 
   function handleLogout() {
     logoutUser();
-    navigate("/");
+    navigate("/login");
   }
 
-  // Edit button dabane pe - form fields ko current data se bhar do
-  function handleEditClick() {
+  // ---------- EDIT PROFILE MODE ----------
+  function handleEditProfileClick() {
     setName(user.name);
     setEmail(user.email);
     setErrors({});
     setMessage("");
-    setIsEditing(true);
+    setMode("editProfile");
   }
 
-  // Cancel button dabane pe
-  function handleCancel() {
-    setIsEditing(false);
-    setErrors({});
-  }
-
-  // Save button dabane pe (form submit)
-  function handleSave(e) {
+  function handleSaveProfile(e) {
     e.preventDefault();
     setErrors({});
 
@@ -68,10 +75,54 @@ function SettingsPage() {
     const updateResult = updateUser({ name, email });
 
     if (updateResult.success) {
-      setUser({ ...user, name, email }); // UI turant update karne ke liye
+      setUser({ ...user, name, email });
       setMessage(updateResult.message);
-      setIsEditing(false);
+      setMode("view");
+    } else {
+      setMessage(updateResult.message);
     }
+  }
+
+  // ---------- CHANGE PASSWORD MODE ----------
+  function handleChangePasswordClick() {
+    setCurrentPassword("");
+    setNewPassword("");
+    setErrors({});
+    setMessage("");
+    setMode("changePassword");
+  }
+
+  function handleSavePassword(e) {
+    e.preventDefault();
+    setErrors({});
+
+    const result = changePasswordSchema.safeParse({ currentPassword, newPassword });
+
+    if (!result.success) {
+      const fieldErrors = {};
+      result.error.issues.forEach((issue) => {
+        fieldErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    const changeResult = changePassword(currentPassword, newPassword);
+
+    if (changeResult.success) {
+      setMessage(changeResult.message);
+      setMode("view");
+      setCurrentPassword("");
+      setNewPassword("");
+    } else {
+      // Galat current password jaisa error yahan dikhega
+      setErrors({ currentPassword: changeResult.message });
+    }
+  }
+
+  function handleCancel() {
+    setMode("view");
+    setErrors({});
   }
 
   if (!user) {
@@ -83,8 +134,8 @@ function SettingsPage() {
       <div className="auth-card">
         <h2>Settings</h2>
 
-        {/* ---------- VIEW MODE (default) ---------- */}
-        {!isEditing && (
+        {/* ---------- VIEW MODE ---------- */}
+        {mode === "view" && (
           <>
             <div className="user-info">
               <p><strong>Name:</strong> {user.name}</p>
@@ -93,8 +144,16 @@ function SettingsPage() {
 
             {message && <p className="auth-message success-message">{message}</p>}
 
-            <button onClick={handleEditClick} className="btn-primary">
+            <button onClick={handleEditProfileClick} className="btn-primary">
               Edit Profile
+            </button>
+
+            <button
+              onClick={handleChangePasswordClick}
+              className="btn-primary"
+              style={{ marginTop: "12px" }}
+            >
+              Change Password
             </button>
 
             <button onClick={handleLogout} className="btn-logout" style={{ marginTop: "12px" }}>
@@ -103,9 +162,9 @@ function SettingsPage() {
           </>
         )}
 
-        {/* ---------- EDIT MODE (form) ---------- */}
-        {isEditing && (
-          <form onSubmit={handleSave}>
+        {/* ---------- EDIT PROFILE MODE ---------- */}
+        {mode === "editProfile" && (
+          <form onSubmit={handleSaveProfile}>
             <div className="form-group">
               <label>Name</label>
               <input
@@ -128,6 +187,64 @@ function SettingsPage() {
 
             <button type="submit" className="btn-primary">
               Save Changes
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="btn-logout"
+              style={{ marginTop: "12px" }}
+            >
+              Cancel
+            </button>
+          </form>
+        )}
+
+        {/* ---------- CHANGE PASSWORD MODE ---------- */}
+        {mode === "changePassword" && (
+          <form onSubmit={handleSavePassword}>
+            <div className="form-group">
+              <label>Current Password</label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              {errors.currentPassword && (
+                <p className="field-error">{errors.currentPassword}</p>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label>New Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              {errors.newPassword && <p className="field-error">{errors.newPassword}</p>}
+
+              <ul className="password-checklist">
+                <li className={passwordChecks.length ? "check-pass" : "check-fail"}>
+                  {passwordChecks.length ? "✓" : "○"} At least 8 characters
+                </li>
+                <li className={passwordChecks.uppercase ? "check-pass" : "check-fail"}>
+                  {passwordChecks.uppercase ? "✓" : "○"} One uppercase letter (A-Z)
+                </li>
+                <li className={passwordChecks.lowercase ? "check-pass" : "check-fail"}>
+                  {passwordChecks.lowercase ? "✓" : "○"} One lowercase letter (a-z)
+                </li>
+                <li className={passwordChecks.number ? "check-pass" : "check-fail"}>
+                  {passwordChecks.number ? "✓" : "○"} One number (0-9)
+                </li>
+                <li className={passwordChecks.special ? "check-pass" : "check-fail"}>
+                  {passwordChecks.special ? "✓" : "○"} One special character (!@#$)
+                </li>
+              </ul>
+            </div>
+
+            <button type="submit" className="btn-primary">
+              Update Password
             </button>
 
             <button

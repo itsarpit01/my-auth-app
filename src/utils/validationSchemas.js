@@ -45,3 +45,17 @@ export const updateProfileSchema = z.object({
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
 });
+// ---------- CHANGE PASSWORD VALIDATION SCHEMA ----------
+export const changePasswordSchema = z.object({
+  currentPassword: z
+    .string()
+    .min(1, "Current password is required"),
+
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least 1 uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least 1 lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least 1 number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 special character"),
+});
