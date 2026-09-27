@@ -1,0 +1,140 @@
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #064e3b 0%, #033024 100%);
+  font-family: Arial, sans-serif;
+}
+
+.auth-card {
+  background: #f8e7c9;
+  padding: 45px 40px;
+  border-radius: 6px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid rgba(6, 78, 59, 0.15);
+}
+
+.auth-card h2 {
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+  color: #064e3b;
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.auth-card h2::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: #064e3b;
+  margin: 12px auto 25px auto;
+  opacity: 0.4;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #064e3b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(6, 78, 59, 0.3);
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fffdf8;
+  color: #064e3b;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #064e3b;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #064e3b;
+  color: #f8e7c9;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #0a6b52;
+}
+
+.auth-message {
+  text-align: center;
+  margin-top: 15px;
+  color: #a13a3a;
+  font-size: 14px;
+}
+
+.switch-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #064e3b;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #064e3b;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.btn-link:hover {
+  color: #0a6b52;
+}
+
+.user-info {
+  margin-bottom: 25px;
+}
+
+.user-info p {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(6, 78, 59, 0.15);
+  color: #064e3b;
+  font-size: 15px;
+}
+
+.btn-logout {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #064e3b;
+  border: 1.5px solid #064e3b;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: #064e3b;
+  color: #f8e7c9;
+}
