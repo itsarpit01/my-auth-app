@@ -32,3 +32,16 @@ export const loginSchema = z.object({
     .string()
     .min(1, "Password is required"),
 });
+
+// ---------- UPDATE PROFILE VALIDATION SCHEMA ----------
+export const updateProfileSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name is too long"),
+
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
+});

@@ -62,12 +62,15 @@ function LandingPage() {
         return;
       }
 
-      signupUser(name, email, password);
-      setMessage("Signup successful! Please login now.");
-      setIsLogin(true);
-      setName("");
-      setEmail("");
-      setPassword("");
+     const signupResult = signupUser(name, email, password);
+setMessage(signupResult.message);
+
+if (signupResult.success) {
+  setIsLogin(true);
+  setName("");
+  setEmail("");
+  setPassword("");
+}
     }
   }
 
