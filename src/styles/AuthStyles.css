@@ -138,3 +138,30 @@
   background: #064e3b;
   color: #f8e7c9;
 }
+
+.field-error {
+  color: #a13a3a;
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+
+.password-checklist {
+  list-style: none;
+  margin-top: 8px;
+  padding: 0;
+}
+
+.password-checklist li {
+  font-size: 12.5px;
+  padding: 2px 0;
+  transition: color 0.2s;
+}
+
+.check-fail {
+  color: #8a8a8a;
+}
+
+.check-pass {
+  color: #064e3b;
+  font-weight: 600;
+}
