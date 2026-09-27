@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../utils/auth";
+import { loginUser } from "../utils/api";
 import { loginSchema } from "../utils/validationSchemas";
+import { getFieldErrors } from "../utils/helpers";
 import "../styles/AuthStyles.css";
 
 function LoginPage() {
@@ -12,23 +13,19 @@ function LoginPage() {
 
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setErrors({});
     setMessage("");
 
     const result = loginSchema.safeParse({ email, password });
 
-    if (!result.success) {
-      const fieldErrors = {};
-      result.error.issues.forEach((issue) => {
-        fieldErrors[issue.path[0]] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
+   if (!result.success) {
+  setErrors(getFieldErrors(result));
+  return;
+}
 
-    const loginResult = loginUser(email, password);
+   const loginResult = await loginUser(email, password);
     setMessage(loginResult.message);
 
     if (loginResult.success) {

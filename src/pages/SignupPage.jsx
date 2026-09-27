@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signupUser } from "../utils/auth";
+import { signupUser } from "../utils/api";
 import { signupSchema } from "../utils/validationSchemas";
 import "../styles/AuthStyles.css";
 
@@ -24,7 +24,7 @@ function SignupPage() {
   const navigate = useNavigate();
   const passwordChecks = getPasswordChecks(password);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setErrors({});
     setMessage("");
@@ -40,7 +40,7 @@ function SignupPage() {
       return;
     }
 
-    const signupResult = signupUser(name, email, password);
+    const signupResult = await signupUser(name, email, password);
     setMessage(signupResult.message);
 
     if (signupResult.success) {

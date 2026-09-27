@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, logoutUser, updateUser, changePassword } from "../utils/auth";
+import {
+  logoutUser,
+  fetchProfile,
+  updateProfile,
+  changePassword,
+} from "../utils/api";
 import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
+import { getFieldErrors } from "../utils/helpers";
 import "../styles/AuthStyles.css";
 
 function getPasswordChecks(pwd) {
@@ -16,39 +22,45 @@ function getPasswordChecks(pwd) {
 
 function SettingsPage() {
   const [user, setUser] = useState(null);
-
-  // View / Edit Profile / Change Password - teen modes
   const [mode, setMode] = useState("view"); // "view" | "editProfile" | "changePassword"
 
-  // Profile edit ke liye states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  // Password change ke liye states
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const passwordChecks = getPasswordChecks(newPassword);
 
+  // Page load hote hi backend se profile fetch karo
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-    if (currentUser) {
-      setName(currentUser.name);
-      setEmail(currentUser.email);
+    async function loadProfile() {
+      const result = await fetchProfile();
+
+      if (result.success) {
+        setUser(result.user);
+        setName(result.user.name);
+        setEmail(result.user.email);
+      } else {
+        // Token invalid/expired hai to logout karke login pe bhejo
+        logoutUser();
+        navigate("/login");
+      }
     }
-  }, []);
+
+    loadProfile();
+  }, [navigate]);
 
   function handleLogout() {
     logoutUser();
     navigate("/login");
   }
 
-  // ---------- EDIT PROFILE MODE ----------
   function handleEditProfileClick() {
     setName(user.name);
     setEmail(user.email);
@@ -57,25 +69,23 @@ function SettingsPage() {
     setMode("editProfile");
   }
 
-  function handleSaveProfile(e) {
+  async function handleSaveProfile(e) {
     e.preventDefault();
     setErrors({});
 
     const result = updateProfileSchema.safeParse({ name, email });
 
     if (!result.success) {
-      const fieldErrors = {};
-      result.error.issues.forEach((issue) => {
-        fieldErrors[issue.path[0]] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
+  setErrors(getFieldErrors(result));
+  return;
+}
 
-    const updateResult = updateUser({ name, email });
+    setIsLoading(true);
+    const updateResult = await updateProfile(name, email);
+    setIsLoading(false);
 
     if (updateResult.success) {
-      setUser({ ...user, name, email });
+      setUser(updateResult.user);
       setMessage(updateResult.message);
       setMode("view");
     } else {
@@ -83,7 +93,6 @@ function SettingsPage() {
     }
   }
 
-  // ---------- CHANGE PASSWORD MODE ----------
   function handleChangePasswordClick() {
     setCurrentPassword("");
     setNewPassword("");
@@ -92,22 +101,20 @@ function SettingsPage() {
     setMode("changePassword");
   }
 
-  function handleSavePassword(e) {
+  async function handleSavePassword(e) {
     e.preventDefault();
     setErrors({});
 
     const result = changePasswordSchema.safeParse({ currentPassword, newPassword });
 
     if (!result.success) {
-      const fieldErrors = {};
-      result.error.issues.forEach((issue) => {
-        fieldErrors[issue.path[0]] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
+  setErrors(getFieldErrors(result));
+  return;
+}
 
-    const changeResult = changePassword(currentPassword, newPassword);
+    setIsLoading(true);
+    const changeResult = await changePassword(currentPassword, newPassword);
+    setIsLoading(false);
 
     if (changeResult.success) {
       setMessage(changeResult.message);
@@ -115,7 +122,6 @@ function SettingsPage() {
       setCurrentPassword("");
       setNewPassword("");
     } else {
-      // Galat current password jaisa error yahan dikhega
       setErrors({ currentPassword: changeResult.message });
     }
   }
@@ -134,7 +140,6 @@ function SettingsPage() {
       <div className="auth-card">
         <h2>Settings</h2>
 
-        {/* ---------- VIEW MODE ---------- */}
         {mode === "view" && (
           <>
             <div className="user-info">
@@ -162,7 +167,6 @@ function SettingsPage() {
           </>
         )}
 
-        {/* ---------- EDIT PROFILE MODE ---------- */}
         {mode === "editProfile" && (
           <form onSubmit={handleSaveProfile}>
             <div className="form-group">
@@ -185,8 +189,10 @@ function SettingsPage() {
               {errors.email && <p className="field-error">{errors.email}</p>}
             </div>
 
-            <button type="submit" className="btn-primary">
-              Save Changes
+            {message && <p className="auth-message">{message}</p>}
+
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Changes"}
             </button>
 
             <button
@@ -200,7 +206,6 @@ function SettingsPage() {
           </form>
         )}
 
-        {/* ---------- CHANGE PASSWORD MODE ---------- */}
         {mode === "changePassword" && (
           <form onSubmit={handleSavePassword}>
             <div className="form-group">
@@ -243,8 +248,8 @@ function SettingsPage() {
               </ul>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Update Password
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update Password"}
             </button>
 
             <button
