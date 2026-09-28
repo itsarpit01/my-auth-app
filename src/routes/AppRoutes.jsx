@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import SettingsPage from "../pages/SettingsPage";
+import TodoPage from "../pages/TodoPage"; // 👈 Import TodoPage
 import { isUserLoggedIn } from "../utils/api";
 
 function ProtectedRoute({ children }) {
@@ -13,7 +14,7 @@ function ProtectedRoute({ children }) {
 
 function PublicRoute({ children }) {
   if (isUserLoggedIn()) {
-    return <Navigate to="/settings" replace />;
+    return <Navigate to="/todos" replace />;
   }
   return children;
 }
@@ -21,8 +22,7 @@ function PublicRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to="/todos" replace />} />
       <Route
         path="/login"
         element={
@@ -39,7 +39,14 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
-
+      <Route
+        path="/todos"
+        element={
+          <ProtectedRoute>
+            <TodoPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/settings"
         element={

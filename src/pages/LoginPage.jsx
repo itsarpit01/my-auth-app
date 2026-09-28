@@ -33,7 +33,7 @@ function LoginPage() {
     setMessage(loginResult.message);
 
     if (loginResult.success) {
-      navigate("/settings");
+      navigate("/todos");
     }
   }
 

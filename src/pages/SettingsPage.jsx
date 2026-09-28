@@ -8,6 +8,7 @@ import {
 } from "../utils/api";
 import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
 import { getFieldErrors, getPasswordChecks } from "../utils/helpers";
+import DashboardLayout from "../layouts/DashboardLayout";
 import "../styles/AuthStyles.css";
 
 function SettingsPage() {

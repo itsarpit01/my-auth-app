@@ -126,3 +126,84 @@ export async function changePassword(currentPassword, newPassword) {
     return handleNetworkError(error);
   }
 }
+const TODO_API = "http://localhost:5000/api/todos";
+
+// 1. Fetch Todos
+export async function fetchTodos(page = 1, filter = "all", search = "", limit = 5) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${TODO_API}?page=${page}&filter=${filter}&search=${encodeURIComponent(search)}&limit=${limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return await response.json();
+  } catch (error) {
+    return handleNetworkError(error);
+  }
+}
+
+// 2. Add Todo
+export async function addTodo(title) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(TODO_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title }),
+    });
+    return await response.json();
+  } catch (error) {
+    return handleNetworkError(error);
+  }
+}
+
+// 3. Update Title (Inline Edit)
+export async function editTodo(id, title) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${TODO_API}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title }),
+    });
+    return await response.json();
+  } catch (error) {
+    return handleNetworkError(error);
+  }
+}
+
+// 4. Toggle Status
+export async function toggleTodoStatus(id) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${TODO_API}/${id}/toggle`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return await response.json();
+  } catch (error) {
+    return handleNetworkError(error);
+  }
+}
+
+// 5. Delete Todo
+export async function removeTodo(id) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${TODO_API}/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return await response.json();
+  } catch (error) {
+    return handleNetworkError(error);
+  }
+}
