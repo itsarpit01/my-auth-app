@@ -44,7 +44,6 @@ function SignupPage() {
     setMessage(signupResult.message);
 
     if (signupResult.success) {
-      // Signup ke baad seedha Login page pe bhej do
       setTimeout(() => navigate("/login"), 1000);
     }
   }

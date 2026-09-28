@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// ---------- SIGNUP VALIDATION SCHEMA ----------
 export const signupSchema = z.object({
   name: z
     .string()
@@ -21,7 +20,6 @@ export const signupSchema = z.object({
     .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 special character"),
 });
 
-// ---------- LOGIN VALIDATION SCHEMA ----------
 export const loginSchema = z.object({
   email: z
     .string()
@@ -33,7 +31,6 @@ export const loginSchema = z.object({
     .min(1, "Password is required"),
 });
 
-// ---------- UPDATE PROFILE VALIDATION SCHEMA ----------
 export const updateProfileSchema = z.object({
   name: z
     .string()
@@ -45,7 +42,7 @@ export const updateProfileSchema = z.object({
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
 });
-// ---------- CHANGE PASSWORD VALIDATION SCHEMA ----------
+
 export const changePasswordSchema = z.object({
   currentPassword: z
     .string()

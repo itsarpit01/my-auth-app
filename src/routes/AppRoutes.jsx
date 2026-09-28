@@ -10,19 +10,18 @@ function ProtectedRoute({ children }) {
   if (!loggedIn) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* ---------- PUBLIC ROUTES GROUP ---------- */}
+
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
-      {/* ---------- PROTECTED ROUTES GROUP ---------- */}
+
       <Route
         path="/settings"
         element={

@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  logoutUser,
-  fetchProfile,
-  updateProfile,
-  changePassword,
-} from "../utils/api";
+import {logoutUser,fetchProfile,  updateProfile,changePassword,} from "../utils/api";
 import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
 import { getFieldErrors } from "../utils/helpers";
 import "../styles/AuthStyles.css";
@@ -22,7 +17,7 @@ function getPasswordChecks(pwd) {
 
 function SettingsPage() {
   const [user, setUser] = useState(null);
-  const [mode, setMode] = useState("view"); // "view" | "editProfile" | "changePassword"
+  const [mode, setMode] = useState("view"); 
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,7 +32,6 @@ function SettingsPage() {
   const navigate = useNavigate();
   const passwordChecks = getPasswordChecks(newPassword);
 
-  // Page load hote hi backend se profile fetch karo
   useEffect(() => {
     async function loadProfile() {
       const result = await fetchProfile();
@@ -47,7 +41,7 @@ function SettingsPage() {
         setName(result.user.name);
         setEmail(result.user.email);
       } else {
-        // Token invalid/expired hai to logout karke login pe bhejo
+
         logoutUser();
         navigate("/login");
       }
