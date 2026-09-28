@@ -2,24 +2,17 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signupUser } from "../utils/api";
 import { signupSchema } from "../utils/validationSchemas";
+import { getFieldErrors, getPasswordChecks } from "../utils/helpers";
 import "../styles/AuthStyles.css";
-
-function getPasswordChecks(pwd) {
-  return {
-    length: pwd.length >= 8,
-    uppercase: /[A-Z]/.test(pwd),
-    lowercase: /[a-z]/.test(pwd),
-    number: /[0-9]/.test(pwd),
-    special: /[^A-Za-z0-9]/.test(pwd),
-  };
-}
 
 function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const passwordChecks = getPasswordChecks(password);
@@ -29,18 +22,18 @@ function SignupPage() {
     setErrors({});
     setMessage("");
 
-    const result = signupSchema.safeParse({ name, email, password });
+    const result = signupSchema.safeParse({ name, email, password, confirmPassword });
 
     if (!result.success) {
-      const fieldErrors = {};
-      result.error.issues.forEach((issue) => {
-        fieldErrors[issue.path[0]] = issue.message;
-      });
-      setErrors(fieldErrors);
+      setErrors(getFieldErrors(result));
       return;
     }
 
+    // Backend ko confirmPassword nahi bhejna, sirf name, email, password
+    setIsLoading(true);
     const signupResult = await signupUser(name, email, password);
+    setIsLoading(false);
+
     setMessage(signupResult.message);
 
     if (signupResult.success) {
@@ -102,8 +95,20 @@ function SignupPage() {
             </ul>
           </div>
 
-          <button type="submit" className="btn-primary">
-            Signup
+          <div className="form-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            {errors.confirmPassword && (
+              <p className="field-error">{errors.confirmPassword}</p>
+            )}
+          </div>
+
+          <button type="submit" className="btn-primary" disabled={isLoading}>
+            {isLoading ? "Signing up..." : "Signup"}
           </button>
         </form>
 

@@ -10,6 +10,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,12 +21,15 @@ function LoginPage() {
 
     const result = loginSchema.safeParse({ email, password });
 
-   if (!result.success) {
-  setErrors(getFieldErrors(result));
-  return;
-}
+    if (!result.success) {
+      setErrors(getFieldErrors(result));
+      return;
+    }
 
-   const loginResult = await loginUser(email, password);
+    setIsLoading(true);
+    const loginResult = await loginUser(email, password);
+    setIsLoading(false);
+
     setMessage(loginResult.message);
 
     if (loginResult.success) {
@@ -59,8 +63,8 @@ function LoginPage() {
             {errors.password && <p className="field-error">{errors.password}</p>}
           </div>
 
-          <button type="submit" className="btn-primary">
-            Login
+          <button type="submit" className="btn-primary" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 

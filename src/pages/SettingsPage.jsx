@@ -1,23 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {logoutUser,fetchProfile,  updateProfile,changePassword,} from "../utils/api";
+import {
+  logoutUser,
+  fetchProfile,
+  updateProfile,
+  changePassword,
+} from "../utils/api";
 import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
-import { getFieldErrors } from "../utils/helpers";
+import { getFieldErrors, getPasswordChecks } from "../utils/helpers";
 import "../styles/AuthStyles.css";
-
-function getPasswordChecks(pwd) {
-  return {
-    length: pwd.length >= 8,
-    uppercase: /[A-Z]/.test(pwd),
-    lowercase: /[a-z]/.test(pwd),
-    number: /[0-9]/.test(pwd),
-    special: /[^A-Za-z0-9]/.test(pwd),
-  };
-}
 
 function SettingsPage() {
   const [user, setUser] = useState(null);
-  const [mode, setMode] = useState("view"); 
+  const [mode, setMode] = useState("view"); // "view" | "editProfile" | "changePassword"
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,6 +27,7 @@ function SettingsPage() {
   const navigate = useNavigate();
   const passwordChecks = getPasswordChecks(newPassword);
 
+  // Page load hote hi backend se profile fetch karo
   useEffect(() => {
     async function loadProfile() {
       const result = await fetchProfile();
@@ -41,7 +37,7 @@ function SettingsPage() {
         setName(result.user.name);
         setEmail(result.user.email);
       } else {
-
+        // Token invalid/expired hai to logout karke login pe bhejo
         logoutUser();
         navigate("/login");
       }
@@ -70,9 +66,9 @@ function SettingsPage() {
     const result = updateProfileSchema.safeParse({ name, email });
 
     if (!result.success) {
-  setErrors(getFieldErrors(result));
-  return;
-}
+      setErrors(getFieldErrors(result));
+      return;
+    }
 
     setIsLoading(true);
     const updateResult = await updateProfile(name, email);
@@ -102,9 +98,9 @@ function SettingsPage() {
     const result = changePasswordSchema.safeParse({ currentPassword, newPassword });
 
     if (!result.success) {
-  setErrors(getFieldErrors(result));
-  return;
-}
+      setErrors(getFieldErrors(result));
+      return;
+    }
 
     setIsLoading(true);
     const changeResult = await changePassword(currentPassword, newPassword);
