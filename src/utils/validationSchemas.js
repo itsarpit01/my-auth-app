@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// ---------- REUSABLE RULES (backend ke rules se match karte hain) ----------
 const nameRule = z
   .string()
   .trim()
@@ -25,7 +24,6 @@ const passwordRule = z
   .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 special character")
   .regex(/^\S*$/, "Password must not contain spaces");
 
-// ---------- SIGNUP ----------
 export const signupSchema = z
   .object({
     name: nameRule,
@@ -52,19 +50,16 @@ export const signupSchema = z
     { message: "Password must not contain your name", path: ["password"] }
   );
 
-// ---------- LOGIN ----------
 export const loginSchema = z.object({
   email: emailRule,
   password: z.string().min(1, "Password is required"),
 });
 
-// ---------- UPDATE PROFILE ----------
 export const updateProfileSchema = z.object({
   name: nameRule,
   email: emailRule,
 });
 
-// ---------- CHANGE PASSWORD ----------
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
   newPassword: passwordRule,

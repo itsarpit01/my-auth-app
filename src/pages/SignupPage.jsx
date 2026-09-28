@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { signupUser } from "../utils/api";
 import { signupSchema } from "../utils/validationSchemas";
 import { getFieldErrors, getPasswordChecks } from "../utils/helpers";
+import PasswordInput from "../components/PasswordInput";
 import "../styles/AuthStyles.css";
 
 function SignupPage() {
@@ -28,8 +29,6 @@ function SignupPage() {
       setErrors(getFieldErrors(result));
       return;
     }
-
-    // Backend ko confirmPassword nahi bhejna, sirf name, email, password
     setIsLoading(true);
     const signupResult = await signupUser(name, email, password);
     setIsLoading(false);
@@ -69,8 +68,7 @@ function SignupPage() {
 
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -97,8 +95,7 @@ function SignupPage() {
 
           <div className="form-group">
             <label>Confirm Password</label>
-            <input
-              type="password"
+            <PasswordInput
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />

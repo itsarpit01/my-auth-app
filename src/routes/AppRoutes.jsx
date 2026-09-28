@@ -4,7 +4,6 @@ import SignupPage from "../pages/SignupPage";
 import SettingsPage from "../pages/SettingsPage";
 import { isUserLoggedIn } from "../utils/api";
 
-// Login nahi hai to /login pe bhej deta hai
 function ProtectedRoute({ children }) {
   if (!isUserLoggedIn()) {
     return <Navigate to="/login" replace />;
@@ -12,7 +11,6 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
-// Login already hai to /settings pe bhej deta hai
 function PublicRoute({ children }) {
   if (isUserLoggedIn()) {
     return <Navigate to="/settings" replace />;
@@ -23,7 +21,7 @@ function PublicRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* ---------- PUBLIC ROUTES GROUP ---------- */}
+
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route
         path="/login"
@@ -42,7 +40,6 @@ function AppRoutes() {
         }
       />
 
-      {/* ---------- PROTECTED ROUTES GROUP ---------- */}
       <Route
         path="/settings"
         element={
