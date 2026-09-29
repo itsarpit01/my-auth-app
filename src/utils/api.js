@@ -205,3 +205,28 @@ export async function removeTodo(id) {
     return handleNetworkError(error);
   }
 }
+
+export async function deleteAccount(password) {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/delete-account`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ password }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      logoutUser(); 
+    }
+
+    return data;
+  } catch (error) {
+    return handleNetworkError(error);
+  }
+}
