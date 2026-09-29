@@ -128,7 +128,6 @@ export async function changePassword(currentPassword, newPassword) {
 }
 const TODO_API = "http://localhost:5000/api/todos";
 
-// 1. Fetch Todos
 export async function fetchTodos(page = 1, filter = "all", search = "", limit = 5) {
   try {
     const token = localStorage.getItem("token");
@@ -144,7 +143,6 @@ export async function fetchTodos(page = 1, filter = "all", search = "", limit = 
   }
 }
 
-// 2. Add Todo
 export async function addTodo(title) {
   try {
     const token = localStorage.getItem("token");
@@ -162,7 +160,7 @@ export async function addTodo(title) {
   }
 }
 
-// 3. Update Title (Inline Edit)
+
 export async function editTodo(id, title) {
   try {
     const token = localStorage.getItem("token");
@@ -180,7 +178,7 @@ export async function editTodo(id, title) {
   }
 }
 
-// 4. Toggle Status
+
 export async function toggleTodoStatus(id) {
   try {
     const token = localStorage.getItem("token");
@@ -194,7 +192,7 @@ export async function toggleTodoStatus(id) {
   }
 }
 
-// 5. Delete Todo
+
 export async function removeTodo(id) {
   try {
     const token = localStorage.getItem("token");

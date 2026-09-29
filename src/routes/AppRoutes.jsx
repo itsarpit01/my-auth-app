@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import SettingsPage from "../pages/SettingsPage";
-import TodoPage from "../pages/TodoPage"; // 👈 Import TodoPage
+import TodoPage from "../pages/TodoPage"; 
 import { isUserLoggedIn } from "../utils/api";
 
 function ProtectedRoute({ children }) {

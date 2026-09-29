@@ -179,7 +179,7 @@
 .switch-text a:hover {
   color: #0a6b52;
 }
-/* Password Input with Eye Toggle Inside */
+
 .password-input-wrapper {
   position: relative;
   width: 100%;
@@ -189,14 +189,14 @@
 
 .password-input-wrapper input {
   width: 100%;
-  padding-right: 40px !important; /* Prevents typed text from going behind the icon */
+  padding-right: 40px !important; 
 }
 
 .password-toggle-btn {
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: translateY(-50%); /* Perfectly centers the eye icon vertically */
+  transform: translateY(-50%);
   background: transparent;
   border: none;
   padding: 4px;

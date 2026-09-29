@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../layouts/DashboardLayout";
 import {
   logoutUser,
   fetchProfile,
@@ -7,13 +8,13 @@ import {
   changePassword,
 } from "../utils/api";
 import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
-import { getFieldErrors, getPasswordChecks } from "../utils/helpers";
-import DashboardLayout from "../layouts/DashboardLayout";
-import "../styles/AuthStyles.css";
+import { getFieldErrors } from "../utils/helpers";
+import PasswordInput from "../components/PasswordInput";
+import "../styles/DashboardStyles.css";
 
 function SettingsPage() {
   const [user, setUser] = useState(null);
-  const [mode, setMode] = useState("view"); // "view" | "editProfile" | "changePassword"
+  const [mode, setMode] = useState("view");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,9 +27,7 @@ function SettingsPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const passwordChecks = getPasswordChecks(newPassword);
 
-  // Page load hote hi backend se profile fetch karo
   useEffect(() => {
     async function loadProfile() {
       const result = await fetchProfile();
@@ -38,7 +37,6 @@ function SettingsPage() {
         setName(result.user.name);
         setEmail(result.user.email);
       } else {
-        // Token invalid/expired hai to logout karke login pe bhejo
         logoutUser();
         navigate("/login");
       }
@@ -46,11 +44,6 @@ function SettingsPage() {
 
     loadProfile();
   }, [navigate]);
-
-  function handleLogout() {
-    logoutUser();
-    navigate("/login");
-  }
 
   function handleEditProfileClick() {
     setName(user.name);
@@ -123,138 +116,121 @@ function SettingsPage() {
   }
 
   if (!user) {
-    return <p>Loading...</p>;
+    return (
+      <DashboardLayout>
+        <p className="table-message">Loading profile...</p>
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Settings</h2>
+    <DashboardLayout>
+      <div className="settings-page-wrapper">
+        <div className="todo-header">
+          <h1>Account Settings</h1>
+          <p>Manage your personal profile and security preferences.</p>
+        </div>
 
-        {mode === "view" && (
-          <>
-            <div className="user-info">
-              <p><strong>Name:</strong> {user.name}</p>
-              <p><strong>Email:</strong> {user.email}</p>
-            </div>
+        <div className="settings-card">
+          {mode === "view" && (
+            <>
+              <div className="settings-info-list">
+                <div className="settings-info-row">
+                  <span className="settings-label">Full Name</span>
+                  <span className="settings-value">{user.name}</span>
+                </div>
+                <div className="settings-info-row">
+                  <span className="settings-label">Email Address</span>
+                  <span className="settings-value">{user.email}</span>
+                </div>
+              </div>
 
-            {message && <p className="auth-message success-message">{message}</p>}
+              {message && <p className="settings-success-message">{message}</p>}
 
-            <button onClick={handleEditProfileClick} className="btn-primary">
-              Edit Profile
-            </button>
+              <div className="settings-btn-group">
+                <button onClick={handleEditProfileClick} className="btn-theme-primary">
+                  Edit Profile
+                </button>
+                <button onClick={handleChangePasswordClick} className="btn-theme-secondary">
+                  Change Password
+                </button>
+              </div>
+            </>
+          )}
 
-            <button
-              onClick={handleChangePasswordClick}
-              className="btn-primary"
-              style={{ marginTop: "12px" }}
-            >
-              Change Password
-            </button>
+          {mode === "editProfile" && (
+            <form onSubmit={handleSaveProfile} className="settings-form">
+              <div className="settings-form-group">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                {errors.name && <p className="field-error">{errors.name}</p>}
+              </div>
 
-            <button onClick={handleLogout} className="btn-logout" style={{ marginTop: "12px" }}>
-              Logout
-            </button>
-          </>
-        )}
+              <div className="settings-form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {errors.email && <p className="field-error">{errors.email}</p>}
+              </div>
 
-        {mode === "editProfile" && (
-          <form onSubmit={handleSaveProfile}>
-            <div className="form-group">
-              <label>Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              {errors.name && <p className="field-error">{errors.name}</p>}
-            </div>
+              {message && <p className="field-error">{message}</p>}
 
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {errors.email && <p className="field-error">{errors.email}</p>}
-            </div>
+              <div className="settings-btn-group">
+                <button type="submit" className="btn-theme-primary" disabled={isLoading}>
+                  {isLoading ? "Saving..." : "Save Changes"}
+                </button>
+                <button type="button" onClick={handleCancel} className="btn-theme-secondary">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
 
-            {message && <p className="auth-message">{message}</p>}
+          {mode === "changePassword" && (
+            <form onSubmit={handleSavePassword} className="settings-form">
+              <div className="settings-form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+                {errors.currentPassword && (
+                  <p className="field-error">{errors.currentPassword}</p>
+                )}
+              </div>
 
-            <button type="submit" className="btn-primary" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save Changes"}
-            </button>
+              <div className="settings-form-group">
+                <label>New Password</label>
+                <PasswordInput
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                {errors.newPassword && (
+                  <p className="field-error">{errors.newPassword}</p>
+                )}
+              </div>
 
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="btn-logout"
-              style={{ marginTop: "12px" }}
-            >
-              Cancel
-            </button>
-          </form>
-        )}
-
-        {mode === "changePassword" && (
-          <form onSubmit={handleSavePassword}>
-            <div className="form-group">
-              <label>Current Password</label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              {errors.currentPassword && (
-                <p className="field-error">{errors.currentPassword}</p>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label>New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              {errors.newPassword && <p className="field-error">{errors.newPassword}</p>}
-
-              <ul className="password-checklist">
-                <li className={passwordChecks.length ? "check-pass" : "check-fail"}>
-                  {passwordChecks.length ? "✓" : "○"} At least 8 characters
-                </li>
-                <li className={passwordChecks.uppercase ? "check-pass" : "check-fail"}>
-                  {passwordChecks.uppercase ? "✓" : "○"} One uppercase letter (A-Z)
-                </li>
-                <li className={passwordChecks.lowercase ? "check-pass" : "check-fail"}>
-                  {passwordChecks.lowercase ? "✓" : "○"} One lowercase letter (a-z)
-                </li>
-                <li className={passwordChecks.number ? "check-pass" : "check-fail"}>
-                  {passwordChecks.number ? "✓" : "○"} One number (0-9)
-                </li>
-                <li className={passwordChecks.special ? "check-pass" : "check-fail"}>
-                  {passwordChecks.special ? "✓" : "○"} One special character (!@#$)
-                </li>
-              </ul>
-            </div>
-
-            <button type="submit" className="btn-primary" disabled={isLoading}>
-              {isLoading ? "Updating..." : "Update Password"}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="btn-logout"
-              style={{ marginTop: "12px" }}
-            >
-              Cancel
-            </button>
-          </form>
-        )}
+              <div className="settings-btn-group">
+                <button type="submit" className="btn-theme-primary" disabled={isLoading}>
+                  {isLoading ? "Updating..." : "Update Password"}
+                </button>
+                <button type="button" onClick={handleCancel} className="btn-theme-secondary">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

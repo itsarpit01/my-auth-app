@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { getCurrentUser, logoutUser } from "../utils/api";
 import "../styles/DashboardStyles.css";
 
-// SVG Icons
+
 function TaskIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -42,11 +42,11 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="dashboard-layout">
-      {/* SIDEBAR */}
+  
       <aside className="dashboard-sidebar">
         <div className="sidebar-brand">
           <h2>TaskMaster</h2>
-          {user && <p className="user-greeting">Welcome, {user.name} 👋</p>}
+          {user && <p className="user-greeting">Welcome, {user.name}</p>}
         </div>
 
         <nav className="sidebar-nav">
@@ -75,7 +75,6 @@ export default function DashboardLayout({ children }) {
         </div>
       </aside>
 
-      {/* MAIN VIEW */}
       <main className="dashboard-main">
         {children}
       </main>
