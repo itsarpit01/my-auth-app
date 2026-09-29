@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
-import {
-  logoutUser,
-  fetchProfile,
-  updateProfile,
-  changePassword,
-} from "../utils/api";
+import {logoutUser,fetchProfile,updateProfile,changePassword,} from "../utils/api";
 import { updateProfileSchema, changePasswordSchema } from "../utils/validationSchemas";
 import { getFieldErrors } from "../utils/helpers";
 import PasswordInput from "../components/PasswordInput";

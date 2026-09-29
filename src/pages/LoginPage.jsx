@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../utils/api";
 import { loginSchema } from "../utils/validationSchemas";
 import { getFieldErrors } from "../utils/helpers";
+import PasswordInput from "../components/PasswordInput";
 import "../styles/AuthStyles.css";
 
 function LoginPage() {
@@ -55,8 +56,7 @@ function LoginPage() {
 
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import {
-  fetchTodos,
-  addTodo,
-  editTodo,
-  toggleTodoStatus,
-  removeTodo,
-} from "../utils/api";
+import {  fetchTodos, addTodo, editTodo, toggleTodoStatus, removeTodo,} from "../utils/api";
 import { taskSchema, searchSchema } from "../utils/todoValidators";
 import "../styles/DashboardStyles.css";
 
