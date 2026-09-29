@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { getCurrentUser, logoutUser } from "../utils/api";
+import { NavLink, useNavigate, Outlet } from "react-router-dom";
+import { getCurrentUser, logoutUser } from "../api/authApi";
 import "../styles/DashboardStyles.css";
 
 
@@ -31,7 +31,7 @@ function LogoutIcon() {
   );
 }
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout() {
   const user = getCurrentUser();
   const navigate = useNavigate();
 
@@ -75,9 +75,9 @@ export default function DashboardLayout({ children }) {
         </div>
       </aside>
 
-      <main className="dashboard-main">
-        {children}
-      </main>
+    <main className="dashboard-main">
+  <Outlet />
+</main>
     </div>
   );
 }

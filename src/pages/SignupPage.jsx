@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signupUser } from "../utils/api";
+import { signupUser } from "../api/authApi";
 import { signupSchema } from "../utils/validationSchemas";
 import { getFieldErrors, getPasswordChecks } from "../utils/helpers";
 import PasswordInput from "../components/PasswordInput";

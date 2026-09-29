@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import {  fetchTodos, addTodo, editTodo, toggleTodoStatus, removeTodo,} from "../utils/api";
+import { fetchTodos, addTodo, editTodo,  toggleTodoStatus,  removeTodo,} from "../api/todoApi";
 import { taskSchema, searchSchema } from "../utils/todoValidators";
 import "../styles/DashboardStyles.css";
 
@@ -146,7 +146,7 @@ function TodoPage() {
   const isSearchDisabled = totalTaskCount === 0;
 
   return (
-    <DashboardLayout>
+  
       <div className="todo-page-wrapper">
         <div className="todo-header">
           <h1>My Tasks</h1>
@@ -346,7 +346,7 @@ function TodoPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+  
   );
 }
 

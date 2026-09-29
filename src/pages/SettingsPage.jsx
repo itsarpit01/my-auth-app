@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import DashboardLayout from "../layouts/DashboardLayout";
+
+import { logoutUser } from "../api/authApi";
 import {
-  logoutUser,
   fetchProfile,
   updateProfile,
   changePassword,
   deleteAccount,
-} from "../utils/api";
+} from "../api/userApi";
 import {
   updateProfileSchema,
   changePasswordSchema,
@@ -148,16 +148,16 @@ function SettingsPage() {
     setErrors({});
   }
 
-  if (!user) {
-    return (
-      <DashboardLayout>
-        <p className="table-message">Loading profile...</p>
-      </DashboardLayout>
-    );
-  }
+ if (!user) {
 
   return (
-    <DashboardLayout>
+    <p className="table-message">Loading profile...</p>
+  );
+
+}
+
+  return (
+  
       <div className="settings-page-wrapper">
         <div className="todo-header">
           <h1>Account Settings</h1>
@@ -281,7 +281,7 @@ function SettingsPage() {
           )}
         </div>
       </div>
-    </DashboardLayout>
+
   );
 }
 
