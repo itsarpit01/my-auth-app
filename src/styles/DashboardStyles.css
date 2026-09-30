@@ -108,9 +108,34 @@
 
 .todo-actions-bar {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 18px;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.todo-actions-bar .input-with-error {
+  flex: 1;
+}
+
+.add-task-form-wrapper {
+  flex-shrink: 0;
+}
+
+.btn-add {
+  background: #e8590c;
+  color: #fff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background: #c94f0e;
 }
 
 .input-with-error {
@@ -557,4 +582,44 @@
   font-size: 13.5px;
   margin-bottom: 16px;
   line-height: 1.5;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 28px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-box h3 {
+  color: #e8590c;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.modal-box p {
+  color: #444;
+  font-size: 14.5px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }

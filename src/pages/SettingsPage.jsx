@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import ConfirmModal from "../components/ConfirmModal";
 import { logoutUser } from "../api/authApi";
 import {
   fetchProfile,
@@ -28,6 +28,7 @@ function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
 
   const [deletePassword, setDeletePassword] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
@@ -116,6 +117,11 @@ function SettingsPage() {
   }
 
   function handleDeleteAccountClick() {
+    setShowDeleteConfirm(true);
+  }
+
+  function handleConfirmDeleteClick() {
+    setShowDeleteConfirm(false);
     setDeletePassword("");
     setErrors({});
     setMessage("");
@@ -148,140 +154,142 @@ function SettingsPage() {
     setErrors({});
   }
 
- if (!user) {
+  if (!user) {
+    return <p className="table-message">Loading profile...</p>;
+  }
 
   return (
-    <p className="table-message">Loading profile...</p>
-  );
-
-}
-
-  return (
-  
-      <div className="settings-page-wrapper">
-        <div className="todo-header">
-          <h1>Account Settings</h1>
-          <p>Manage your personal profile and security preferences.</p>
-        </div>
-
-        <div className="settings-card">
-          {mode === "view" && (
-            <>
-              <div className="settings-info-list">
-                <div className="settings-info-row">
-                  <span className="settings-label">Full Name</span>
-                  <span className="settings-value">{user.name}</span>
-                </div>
-                <div className="settings-info-row">
-                  <span className="settings-label">Email Address</span>
-                  <span className="settings-value">{user.email}</span>
-                </div>
-              </div>
-
-              {message && <p className="settings-success-message">{message}</p>}
-
-              <div className="settings-btn-group">
-                <button onClick={handleEditProfileClick} className="btn-theme-primary">
-                  Edit Profile
-                </button>
-                <button onClick={handleChangePasswordClick} className="btn-theme-secondary">
-                  Change Password
-                </button>
-              </div>
-            </>
-          )}
-
-          {mode === "editProfile" && (
-            <form onSubmit={handleSaveProfile} className="settings-form">
-              <div className="settings-form-group">
-                <label>Full Name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                {errors.name && <p className="field-error">{errors.name}</p>}
-              </div>
-
-              <div className="settings-form-group">
-                <label>Email Address</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                {errors.email && <p className="field-error">{errors.email}</p>}
-              </div>
-
-              {message && <p className="field-error">{message}</p>}
-
-              <div className="settings-btn-group">
-                <button type="submit" className="btn-theme-primary" disabled={isLoading}>
-                  {isLoading ? "Saving..." : "Save Changes"}
-                </button>
-                <button type="button" onClick={handleCancel} className="btn-theme-secondary">
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-
-          {mode === "changePassword" && (
-            <form onSubmit={handleSavePassword} className="settings-form">
-              <div className="settings-form-group">
-                <label>Current Password</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-                {errors.currentPassword && <p className="field-error">{errors.currentPassword}</p>}
-              </div>
-
-              <div className="settings-form-group">
-                <label>New Password</label>
-                <PasswordInput value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                {errors.newPassword && <p className="field-error">{errors.newPassword}</p>}
-              </div>
-
-              <div className="settings-btn-group">
-                <button type="submit" className="btn-theme-primary" disabled={isLoading}>
-                  {isLoading ? "Updating..." : "Update Password"}
-                </button>
-                <button type="button" onClick={handleCancel} className="btn-theme-secondary">
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-
-          {mode === "deleteAccount" && (
-            <form onSubmit={handleConfirmDelete} className="settings-form">
-              <p className="danger-warning">
-                This will permanently deactivate your account. You will be logged out and won't
-                be able to log back in with these credentials. This cannot be undone.
-              </p>
-
-              <div className="settings-form-group">
-                <label>Enter your password to confirm</label>
-                <PasswordInput value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} />
-                {errors.password && <p className="field-error">{errors.password}</p>}
-              </div>
-
-              <div className="settings-btn-group">
-                <button type="submit" className="btn-danger" disabled={isLoading}>
-                  {isLoading ? "Deleting..." : "Delete My Account"}
-                </button>
-                <button type="button" onClick={handleCancel} className="btn-theme-secondary">
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Danger zone: sirf view mode me dikhta hai, upar wale buttons se alag rakha hai */}
-          {mode === "view" && (
-            <div className="danger-zone">
-              <button onClick={handleDeleteAccountClick} className="btn-danger-outline">
-                Delete Account
-              </button>
-            </div>
-          )}
-        </div>
+    <div className="settings-page-wrapper">
+      <div className="todo-header">
+        <h1>Account Settings</h1>
+        <p>Manage your personal profile and security preferences.</p>
       </div>
 
+      <div className="settings-card">
+        {mode === "view" && (
+          <>
+            <div className="settings-info-list">
+              <div className="settings-info-row">
+                <span className="settings-label">Full Name</span>
+                <span className="settings-value">{user.name}</span>
+              </div>
+              <div className="settings-info-row">
+                <span className="settings-label">Email Address</span>
+                <span className="settings-value">{user.email}</span>
+              </div>
+            </div>
+
+            {message && <p className="settings-success-message">{message}</p>}
+
+            <div className="settings-btn-group">
+              <button onClick={handleEditProfileClick} className="btn-theme-primary">
+                Edit Profile
+              </button>
+              <button onClick={handleChangePasswordClick} className="btn-theme-secondary">
+                Change Password
+              </button>
+            </div>
+          </>
+        )}
+
+        {mode === "editProfile" && (
+          <form onSubmit={handleSaveProfile} className="settings-form">
+            <div className="settings-form-group">
+              <label>Full Name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+              {errors.name && <p className="field-error">{errors.name}</p>}
+            </div>
+
+            <div className="settings-form-group">
+              <label>Email Address</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              {errors.email && <p className="field-error">{errors.email}</p>}
+            </div>
+
+            {message && <p className="field-error">{message}</p>}
+
+            <div className="settings-btn-group">
+              <button type="submit" className="btn-theme-primary" disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save Changes"}
+              </button>
+              <button type="button" onClick={handleCancel} className="btn-theme-secondary">
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {mode === "changePassword" && (
+          <form onSubmit={handleSavePassword} className="settings-form">
+            <div className="settings-form-group">
+              <label>Current Password</label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              {errors.currentPassword && <p className="field-error">{errors.currentPassword}</p>}
+            </div>
+
+            <div className="settings-form-group">
+              <label>New Password</label>
+              <PasswordInput value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+              {errors.newPassword && <p className="field-error">{errors.newPassword}</p>}
+            </div>
+
+            <div className="settings-btn-group">
+              <button type="submit" className="btn-theme-primary" disabled={isLoading}>
+                {isLoading ? "Updating..." : "Update Password"}
+              </button>
+              <button type="button" onClick={handleCancel} className="btn-theme-secondary">
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {mode === "deleteAccount" && (
+          <form onSubmit={handleConfirmDelete} className="settings-form">
+            <p className="danger-warning">
+              This will permanently deactivate your account. You will be logged out and won't
+              be able to log back in with these credentials. This cannot be undone.
+            </p>
+
+            <div className="settings-form-group">
+              <label>Enter your password to confirm</label>
+              <PasswordInput value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} />
+              {errors.password && <p className="field-error">{errors.password}</p>}
+            </div>
+
+            <div className="settings-btn-group">
+              <button type="submit" className="btn-danger" disabled={isLoading}>
+                {isLoading ? "Deleting..." : "Delete My Account"}
+              </button>
+              <button type="button" onClick={handleCancel} className="btn-theme-secondary">
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {mode === "view" && (
+          <div className="danger-zone">
+            <button onClick={handleDeleteAccountClick} className="btn-danger-outline">
+              Delete Account
+            </button>
+          </div>
+        )}
+      </div>
+
+      {showDeleteConfirm && (
+        <ConfirmModal
+          title="Delete Account?"
+          message="Are you sure you want to delete your account? This action cannot be undone."
+          onConfirm={handleConfirmDeleteClick}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
+    </div>
   );
 }
 
